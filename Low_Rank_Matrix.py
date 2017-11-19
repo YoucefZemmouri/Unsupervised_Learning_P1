@@ -1,6 +1,6 @@
 from tools import *
 
-# Creates a matrix whose columns are affinely independant 
+# Creates a matrix whose columns are affinely dependent 
 X0 = np.random.randint(10, size=5)
 X = []
 for i in range(10):
@@ -16,10 +16,11 @@ W = np.random.randint(2, size=X.shape)
 print("Observed entries : ")
 print(np.around(X*W,decimals=2))
 
-tau = 0.01
-beta = 0.1
+tau = 1000
+beta = 0.01
+epsilon = 0.01
 
-A = LRMC(X, W, tau, beta)
+A = LRMC(X, W, tau, beta, epsilon)
 
 print("Recovered matrix : ")
 print(np.around(A,decimals=2))
