@@ -50,17 +50,44 @@ def Pro(W, X):
 
 
 def SoftThreshold(epsilon, x):
+    """
+    :param epsilon: margin
+    :param x: value
+    :return: Soft thresholding operator
+    """
     return np.sign(x) * np.maximum(np.abs(x) - epsilon, 0)
 
 
 def D_operator(tau, X):
     """
-    :param tau:
-    :param X:
-    :return:
+    :param tau: margin
+    :param X: Data Matrix
+    :return: Singular value thresholding operator
     """
     U, s, V = np.linalg.svd(X, full_matrices=True)
     Sigma = np.zeros(X.shape)
     Sigma[:s.shape[0], :s.shape[0]] = np.diag(s)
 
     return np.dot(U, np.dot(SoftThreshold(tau, Sigma), V))
+
+
+def LRMC(X, W, tau, beta):
+    """
+    :param X: Data Matrix
+    :param W: Binary Matrix
+    :param tau: Parameter of the optimization problem
+    :param beta: Step size of the dual gradient ascent step
+    :return: Low-rank completion of the matrix X
+    """
+    if CheckBinary(W) and CheckShape(X, W):
+        Z = np.zeros(X.shape)
+        Z_prev = Z
+        A = D_operator(tau, Pro(W, Z))
+        Z = Z + beta * (Pro(W, X) - Pro(W, Z))
+        while not np.array_equal(Z_prev, Z):
+            Z_prev = Z
+            A = D_operator(tau, Pro(W, Z))
+            Z = Z + beta * (Pro(W, X) - Pro(W, Z))
+        return A
+    else:
+        print("Matrix W is not binary or X and W do not have the same shape")
