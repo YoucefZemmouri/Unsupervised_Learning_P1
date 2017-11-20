@@ -32,7 +32,7 @@ imgs_miss = W*imgs
 
 tau = 50000
 beta = 0.01
-epsilon = 0.01
+epsilon = 1  # pixel value range in [0, 255]
 
 imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon)
 

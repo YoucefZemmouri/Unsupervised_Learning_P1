@@ -24,7 +24,7 @@ print(np.around(X*W,decimals=2))
 
 tau = 1000
 beta = 0.01
-epsilon = 0.001
+epsilon = 0.1
 
 A = LRMC(X, W, tau, beta, epsilon)
 

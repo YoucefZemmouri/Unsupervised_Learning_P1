@@ -62,14 +62,15 @@ def LRMC(X, W, tau, beta, epsilon):
     """
     if CheckBinary(W) and CheckShape(X, W):
         Z = np.zeros(X.shape)
-        Z_prev = Z+100 # Set it to an arbitrery value but different from Z
         Pro_WX = W * X # To avoid calculating it at each iteration
         count = 0
         t = time.time()
-        while np.mean(abs(Z - Z_prev)) > epsilon:
-            Z_prev = Z
+        while True:
             A = D_operator(tau, W * Z)
-            Z = Z + beta * (Pro_WX - W * A)
+            dLdZ = Pro_WX - W * A  # gradient of L w.r.t Z
+            if np.max(np.abs(dLdZ)) < epsilon:
+                break
+            Z += beta * dLdZ
             count += 1
         elapsed = time.time()-t
         print(count, ' iterations used, ', elapsed, ' seconds')
