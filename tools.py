@@ -25,11 +25,10 @@ def Pro(W, X):
     :return: Orthogonal projection onto the span of all matrices
     vanishing outside of W
     """
-    if CheckBinary(W) and CheckShape(X, W):
-        return W*X
-    else:
-        print("Matrix W is not binary or X and W do not have the same shape")
-
+    #if CheckBinary(W) and CheckShape(X, W):
+    return W*X
+    #else:
+        #print("Matrix W is not binary or X and W do not have the same shape")
 
 def SoftThreshold(epsilon, x):
     """
@@ -63,12 +62,17 @@ def LRMC(X, W, tau, beta, epsilon):
     """
     if CheckBinary(W) and CheckShape(X, W):
         Z = np.zeros(X.shape)
-        Z_prev = Z+1 # Set it to an arbitrery value but different from Z
-        Pro_WX = Pro(W, X) # To avoid calculating it at each iteration
-        while sum(sum(abs(Z-Z_prev))) > epsilon:
+        Z_prev = Z+100 # Set it to an arbitrery value but different from Z
+        Pro_WX = W * X # To avoid calculating it at each iteration
+        count = 0
+        t = time.time()
+        while np.mean(abs(Z - Z_prev)) > epsilon:
             Z_prev = Z
-            A = D_operator(tau, Pro(W, Z))
-            Z = Z + beta * (Pro_WX - Pro(W, A))
+            A = D_operator(tau, W * Z)
+            Z = Z + beta * (Pro_WX - W * A)
+            count += 1
+        elapsed = time.time()-t
+        print(count, ' iterations used, ', elapsed, ' seconds')
         return A
     else:
         print("Matrix W is not binary or X and W do not have the same shape")
