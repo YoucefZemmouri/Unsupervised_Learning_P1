@@ -46,11 +46,10 @@ def D_operator(tau, X):
     :param X: Data Matrix
     :return: Singular value thresholding operator
     """
-    U, s, V = np.linalg.svd(X, full_matrices=True)
-    Sigma = np.zeros(X.shape)
-    Sigma[:s.shape[0], :s.shape[0]] = np.diag(s)
+    U, s, V = np.linalg.svd(X, full_matrices=False)
+    Sigma = np.diag(SoftThreshold(tau, s))
 
-    return np.dot(U, np.dot(SoftThreshold(tau, Sigma), V))
+    return np.dot(U, np.dot(Sigma, V))
 
 
 def LRMC(X, W, tau, beta, epsilon):
