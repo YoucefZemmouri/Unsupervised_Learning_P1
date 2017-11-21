@@ -51,7 +51,7 @@ def D_operator(tau, X):
     return np.dot(U, np.dot(Sigma, V))
 
 
-def LRMC(X, W, tau, beta, epsilon):
+def LRMC(X, W, tau, beta, epsilon, A_start = None):
     """
     :param X: Data Matrix
     :param W: Binary Matrix
@@ -65,11 +65,13 @@ def LRMC(X, W, tau, beta, epsilon):
         Pro_WX = W * X # To avoid calculating it at each iteration
         count = 0
         t = time.time()
+        if A_start is not None: # initialize A if given
+            Z = Pro_WX - W * A_start
         while True:
             A = D_operator(tau, W * Z)
             dLdZ = Pro_WX - W * A  # gradient of L w.r.t Z
             max_norm = np.max(np.abs(dLdZ))
-            print('i=',count,'step = ', max_norm)
+            print('i=',count, ' step = ', max_norm)
             if max_norm < epsilon:
                 break
             Z += beta * dLdZ
