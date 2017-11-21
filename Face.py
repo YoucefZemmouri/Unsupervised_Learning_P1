@@ -10,6 +10,8 @@ def hstack_images(ims):
         im_large[:,shape[1]*i:shape[1]*(i+1)] = img
     return im_large
 
+np.random.seed(123456) # fix random seed
+
 imgs = []
 shape = (192,168)
 individual = 1
@@ -37,9 +39,13 @@ tau = 20000
 # Leman: beta should be strictly < 2, beta = 2 may diverge, no idea why ...
 beta = min(1.9, imgs.size/M)
 epsilon = 0.01  # for reference of unit, pixel value range in [0, 255]
-print('(tau,beta,eps)=', tau, beta, epsilon)
 
-imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon)
+imgs_recover = np.zeros(imgs_miss.shape)
+imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon, A_start= imgs_recover, verbose= True)
+# for i in range(10):
+#     print('(tau,beta,eps)=', tau, beta, epsilon)
+#     imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon, A_start= imgs_recover, verbose= False)
+#     tau *= 2
 
 MSE = np.mean((imgs_recover - imgs) ** 2)
 print('Mean Square Error = ', MSE)
@@ -51,13 +57,15 @@ row012 = np.vstack((row0, row1, row2))
 plt.imshow(row012, cmap='gray')
 plt.show()
 
-for i in range(10):
-    name = 'result/missing_%03d_%d_%02d.png' % (gamma*100, individual, i+1)
-    mpimg.imsave(name, imgs_miss[i].reshape(shape), vmin=0, vmax=255, cmap='gray')
+# for i in range(10):
+#     name = 'result/missing_%03d_%d_%02d.png' % (gamma*100, individual, i+1)
+#     mpimg.imsave(name, imgs_miss[i].reshape(shape), vmin=0, vmax=255, cmap='gray')
+#
+# for i in range(10):
+#     name = 'result/recover_%03d_tau_%d_%d_%02d_.png' % (gamma * 100, tau, individual, i + 1)
+#     mpimg.imsave(name, imgs_recover[i].reshape(shape), vmin=0, vmax=255, cmap='gray')
 
-for i in range(10):
-    name = 'result/recover_%03d_tau_%d_%d_%02d_.png' % (gamma * 100, tau, individual, i + 1)
-    mpimg.imsave(name, imgs_recover[i].reshape(shape), vmin=0, vmax=255, cmap='gray')
+
 
 # epsilon = 0.01
 
