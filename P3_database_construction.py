@@ -6,13 +6,13 @@ GoodMovies_idx = pd.Series(
     [(("Horror" in G) | ("Romance" in G)) for G in movies.genres], 
     index = movies.index
 )
-GoodMovies = movies[GoodMovies_idx]
+GoodMovies = movies[GoodMovies_idx].movieId
 
 ratings = pd.read_csv("movies-data/ratings.csv")
-GoodRatings_idx = [(m in GoodMovies.movieId) for m in ratings.movieId]
-GoodRatings = ratings[GoodRatings_idx]
+GoodRatings_idx = [(m in GoodMovies) for m in ratings.movieId]
+GoodRatings = ratings[GoodRatings_idx][["userId","movieId","rating"]]
 
-print("Number of movies :", len(GoodMovies.index))
+print("Number of movies :", len(GoodMovies))
 print("Number of users :", len(GoodRatings.userId.unique()))
 print("Number of ratings :", len(GoodRatings.rating))
 
