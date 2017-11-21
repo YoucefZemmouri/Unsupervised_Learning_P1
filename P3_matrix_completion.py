@@ -32,8 +32,9 @@ X_test = X_test.fillna(0).as_matrix()
 W_test = W_test.as_matrix()
 
 tau = 1000
-beta = 2
-epsilon = 1 # bad precision, just to make the code run fast
+# Leman: beta should be strictly < 2, beta = 2 may diverge, no idea why ...
+beta = 1.8
+epsilon = 1  # bad precision, just to make the code run fast
 
 A = LRMC(X,W,tau,beta,epsilon)
 

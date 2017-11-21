@@ -34,7 +34,8 @@ imgs_miss = W*imgs
 
 
 tau = 20000
-beta = min(1.9, imgs.size/M)  # beta = 2 may diverge
+# Leman: beta should be strictly < 2, beta = 2 may diverge, no idea why ...
+beta = min(1.9, imgs.size/M)
 epsilon = 0.01  # for reference of unit, pixel value range in [0, 255]
 print('(tau,beta,eps)=', tau, beta, epsilon)
 

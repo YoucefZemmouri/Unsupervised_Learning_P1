@@ -68,7 +68,9 @@ def LRMC(X, W, tau, beta, epsilon):
         while True:
             A = D_operator(tau, W * Z)
             dLdZ = Pro_WX - W * A  # gradient of L w.r.t Z
-            if np.max(np.abs(dLdZ)) < epsilon:
+            max_norm = np.max(np.abs(dLdZ))
+            print('i=',count,'step = ', max_norm)
+            if max_norm < epsilon:
                 break
             Z += beta * dLdZ
             count += 1
