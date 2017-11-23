@@ -18,11 +18,11 @@ def ratingsToMatrix(R,rows,cols):
 
     return X, W
 
-RatingsTrain = pd.read_csv("movies-data/Train.csv")
-RatingsTest = pd.read_csv("movies-data/Test.csv")
+dataset = "original" # If we use the file provided by Réne Vidal
+#dataset = "movielens" # If we use the Movielens database we built with P3_movielens.py
 
-# RatingsTrain = pd.read_csv("movies-data/specific_Train.csv")
-# RatingsTest = pd.read_csv("movies-data/specific_Test.csv")
+RatingsTrain = pd.read_csv("movies-data/"+dataset+"_Train.csv")
+RatingsTest = pd.read_csv("movies-data/"+dataset+"_Test.csv")
 
 rows = RatingsTrain.movieId.unique()
 cols = RatingsTrain.userId.unique()
@@ -33,7 +33,7 @@ cols = RatingsTrain.userId.unique()
 D,N = X.shape
 M = np.sum(W)
 
-tau = 1000
+tau = 100000
 beta = min(2,D*N/M)
 epsilon = 0.1
 
