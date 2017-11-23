@@ -2,47 +2,42 @@ import pandas as pd
 import numpy as np
 from tools import LRMC
 
+def ratingsToMatrix(R,rows,cols):
+    X = pd.DataFrame(
+        index=rows,
+        columns=cols
+    )
+    for user in R.userId.unique():
+        RUser = R[R.userId == user]
+        RUser.index = RUser.movieId
+        X[user] = RUser.rating
+
+    W = 1-X.isnull()
+    X = X.fillna(0).as_matrix()
+    W = W.as_matrix()
+
+    return X, W
+
 RatingsTrain = pd.read_csv("movies-data/Train.csv")
 RatingsTest = pd.read_csv("movies-data/Test.csv")
 
-X = pd.DataFrame(
-	index=RatingsTrain.movieId.unique(),
-	columns=RatingsTrain.userId.unique()
-)
-for user in RatingsTrain.userId.unique():
-    RatingsUser = RatingsTrain[RatingsTrain.userId == user]
-    RatingsUser.index = RatingsUser.movieId
-    X[user] = RatingsUser.rating
+rows = RatingsTrain.movieId.unique()
+cols = RatingsTrain.userId.unique()
 
-W = 1-X.isnull()
-X = X.fillna(0).as_matrix()
-W = W.as_matrix()
+[X, W] = ratingsToMatrix(RatingsTrain, rows, cols)
+[X_test, W_test] = ratingsToMatrix(RatingsTest, rows, cols)
 
-X_test = pd.DataFrame(
-	index=RatingsTrain.movieId.unique(),
-	columns=RatingsTrain.userId.unique()
-)
-for user in RatingsTest.userId.unique():
-    RatingsUser = RatingsTest[RatingsTest.userId == user]
-    RatingsUser.index = RatingsUser.movieId
-    X_test[user] = RatingsUser.rating
-
-W_test = 1-X_test.isnull()
-X_test = X_test.fillna(0).as_matrix()
-W_test = W_test.as_matrix()
-
-tau = 1000
-# Leman: beta should be strictly < 2, beta = 2 may diverge, no idea why ...
+tau = 100
 beta = 1.8
-epsilon = 1  # bad precision, just to make the code run fast
+epsilon = 0.1
 
 A = LRMC(X,W,tau,beta,epsilon)
 
 print(
-	"Mean prediction error (on the whole test set) :",
-	np.sum(abs(A*W_test - X_test))/RatingsTest.index.size
-)
-print(
-	"Maximal prediction error :",
-	np.max(abs(A*W_test - X_test))
+    "Mean prediction error :",
+    np.sum(abs(A*W_test - X_test))/RatingsTest.index.size,
+    "\nMean squared prediction error :",
+    np.sum((A*W_test - X_test)**2)/RatingsTest.index.size,
+    "\nMaximal prediction error :",
+    np.max(abs(A*W_test - X_test))
 )
