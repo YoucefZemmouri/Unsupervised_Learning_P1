@@ -21,14 +21,20 @@ def ratingsToMatrix(R,rows,cols):
 RatingsTrain = pd.read_csv("movies-data/Train.csv")
 RatingsTest = pd.read_csv("movies-data/Test.csv")
 
+# RatingsTrain = pd.read_csv("movies-data/specific_Train.csv")
+# RatingsTest = pd.read_csv("movies-data/specific_Test.csv")
+
 rows = RatingsTrain.movieId.unique()
 cols = RatingsTrain.userId.unique()
 
 [X, W] = ratingsToMatrix(RatingsTrain, rows, cols)
 [X_test, W_test] = ratingsToMatrix(RatingsTest, rows, cols)
 
-tau = 100
-beta = 1.8
+D,N = X.shape
+M = np.sum(W)
+
+tau = 1000
+beta = min(2,D*N/M)
 epsilon = 0.1
 
 A = LRMC(X,W,tau,beta,epsilon)

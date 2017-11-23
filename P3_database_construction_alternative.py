@@ -1,24 +1,10 @@
 import pandas as pd
-import random
 
-movies = pd.read_csv("movies-data/movies.csv")
-GoodMovies_idx = pd.Series(
-    [(("Horror" in G) | ("Romance" in G)) for G in movies.genres], 
-    index = movies.index
-)
-GoodMovies = movies[GoodMovies_idx].movieId
+# We directly use the file provided by Réne Vidal.
 
-ratings = pd.read_csv("movies-data/ratings.csv")
+GoodRatings = pd.read_csv("movies-data/specific_dataset.csv")
 
-GoodRatings_idx_movies = [m in GoodMovies for m in ratings.movieId]
-GoodRatings = ratings[GoodRatings_idx_movies][["userId","movieId","rating"]]
-
-RatingsPerUser = GoodRatings.userId.value_counts()
-GoodUsers = RatingsPerUser[RatingsPerUser >= 4].index
-GoodRatings_idx_users = [u in GoodUsers for u in GoodRatings.userId]
-GoodRatings = GoodRatings[GoodRatings_idx_users]
-
-print("Number of movies :", len(GoodMovies))
+print("Number of movies :", len(GoodRatings.movieId.unique()))
 print("Number of users :", len(GoodRatings.userId.unique()))
 print("Number of ratings :", len(GoodRatings.rating))
 
@@ -43,5 +29,5 @@ while RatingsTrain.index.size > train_len:
 print("Verification : Size of training set :", RatingsTrain.index.size)
 print("Verification : Size of test set :", RatingsTest.index.size)
 
-RatingsTrain.to_csv("movies-data/Train.csv", index=False)
-RatingsTest.to_csv("movies-data/Test.csv", index=False)
+RatingsTrain.to_csv("movies-data/specific_Train.csv", index=False)
+RatingsTest.to_csv("movies-data/specific_Test.csv", index=False)
