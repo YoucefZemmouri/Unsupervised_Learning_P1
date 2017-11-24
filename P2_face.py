@@ -17,7 +17,7 @@ shape = (192,168)
 individual = 1
 for i in range(10):
     img = mpimg.imread('images/%d_%02d.pgm' % (individual, i+1))
-    v = img.flatten()
+    v = img.flatten()  # vectorize image into a row in matrix
     imgs.append(v)
 
 imgs = np.array(imgs)
@@ -41,7 +41,9 @@ beta = min(1.9, imgs.size/M)
 epsilon = 0.01  # for reference of unit, pixel value range in [0, 255]
 
 imgs_recover = np.zeros(imgs_miss.shape)
-imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon, A_start= imgs_recover, verbose= True)
+imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon, verbose= True)
+
+# increase tau during minimization, doesn't seem faster
 # for i in range(10):
 #     print('(tau,beta,eps)=', tau, beta, epsilon)
 #     imgs_recover = LRMC(imgs_miss, W, tau, beta, epsilon, A_start= imgs_recover, verbose= False)
@@ -57,6 +59,7 @@ row012 = np.vstack((row0, row1, row2))
 plt.imshow(row012, cmap='gray')
 plt.show()
 
+# save result images
 # for i in range(10):
 #     name = 'result/missing_%03d_%d_%02d.png' % (gamma*100, individual, i+1)
 #     mpimg.imsave(name, imgs_miss[i].reshape(shape), vmin=0, vmax=255, cmap='gray')
@@ -66,7 +69,7 @@ plt.show()
 #     mpimg.imsave(name, imgs_recover[i].reshape(shape), vmin=0, vmax=255, cmap='gray')
 
 
-
+# record of result
 # epsilon = 0.01
 
 # 90% missing
